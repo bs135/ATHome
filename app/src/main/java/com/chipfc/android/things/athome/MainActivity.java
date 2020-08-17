@@ -1,11 +1,4 @@
-/*
-    A basic App launcher for Android Things by Carl Whalley
-
-    This class shows a list of Apps to be launched.
-    If your app has no BACK button you'll not be able to get out of it, so a quick tip is to use
-    ADB shell input keyevent 4 when it's needed.
- */
-package com.otamate.android.things.athome;
+package com.chipfc.android.things.athome;
 
 import android.app.Activity;
 import android.content.Context;
@@ -42,18 +35,18 @@ public class MainActivity extends Activity {
         progressBar = findViewById(R.id.progress_bar);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         List<App> installedApps = getAllApplications(getApplicationContext(), false);
         AppAdapter appAdapter = new AppAdapter(installedApps);
 
-        for (App app: installedApps) {
-            Log.d(TAG, "Installed package: " + app.getPackageName());
-            Log.d(TAG, "Installed App    : " + app.getName());
+        for (App app : installedApps) {
+            Log.d(TAG, "Installed App : " + app.getName() + " => PackageName" + app.getPackageName());
         }
 
         recyclerView.setAdapter(appAdapter);
@@ -72,16 +65,29 @@ public class MainActivity extends Activity {
                 continue;
             }
 
-            App newApp = new App();
+            if (pkgInfo.packageName.equalsIgnoreCase("com.chipfc.android.things.athome")) {
+                continue;
+            }
+
             boolean isSystemApp = ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+
+            if (pkgInfo.packageName.equalsIgnoreCase("com.android.documentsui")
+                    || pkgInfo.packageName.equalsIgnoreCase("com.android.deskclock")) {
+                isSystemApp = false;
+            }
+
+            if (!includeSystemApps && isSystemApp) {
+                continue;
+            }
+
+            App newApp = new App();
 
             newApp.setPackageName(pkgInfo.packageName);
             newApp.setName(pkgInfo.applicationInfo.loadLabel(packageManager).toString());
             newApp.setIcon(pkgInfo.applicationInfo.loadIcon(packageManager));
 
-            if (includeSystemApps || !isSystemApp) {
-                installedApps.add(newApp);
-            }
+            installedApps.add(newApp);
+
         }
 
         return installedApps;

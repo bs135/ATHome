@@ -1,9 +1,4 @@
-/*
-    A basic App launcher for Android Things by Carl Whalley
-
-    This class holds the App information used in the RecyclerView
- */
-package com.otamate.android.things.athome;
+package com.chipfc.android.things.athome;
 
 import android.graphics.drawable.Drawable;
 

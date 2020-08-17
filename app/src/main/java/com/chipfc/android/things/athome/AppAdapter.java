@@ -1,10 +1,4 @@
-/*
-    A basic App launcher for Android Things by Carl Whalley
-
-    This class manages the adapter for the RecyclerView and perform the Activity
-    launch on an item click.
- */
-package com.otamate.android.things.athome;
+package com.chipfc.android.things.athome;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +21,7 @@ class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
 
     @Override
     public AppAdapter.AppViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new AppViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.app_row,parent,false));
+        return new AppViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.app_row, parent, false));
     }
 
     @Override
@@ -56,10 +50,16 @@ class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "Package: " + packageName.getText());
+                    Log.d(TAG, "Click on package: " + packageName.getText());
 
-                    Intent LaunchIntent = itemView.getContext().getPackageManager().getLaunchIntentForPackage(packageName.getText().toString());
-                    itemView.getContext().startActivity( LaunchIntent );
+                    try {
+                        Intent LaunchIntent = itemView.getContext().getPackageManager().getLaunchIntentForPackage(packageName.getText().toString());
+                        itemView.getContext().startActivity(LaunchIntent);
+
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Can not launch package " + packageName.getText() + ". " + ex.getMessage());
+                    }
+
                 }
             });
         }
